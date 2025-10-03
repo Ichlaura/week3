@@ -17,6 +17,14 @@ app.use('/api/items', itemsRoutes);
 // Documentación Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
+
+// Redirigir la raíz al Swagger UI
+app.get('/', (req, res) => {
+  res.redirect('/api-docs');
+});
+
+
+
 const port = process.env.PORT || 3000;
 
 // Conectar a MongoDB

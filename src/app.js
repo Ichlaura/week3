@@ -4,7 +4,9 @@ const dotenv = require('dotenv');
 const { MongoClient } = require('mongodb');
 const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./swagger-output.json');
+
 const itemsRoutes = require('./routes/items');
+const ordersRoutes = require('./routes/orders');
 
 dotenv.config();
 
@@ -13,19 +15,17 @@ app.use(bodyParser.json());
 
 // Rutas API
 app.use('/api/items', itemsRoutes);
+app.use('/api/orders', ordersRoutes);
 
 // Documentación Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
-
 
 // Redirigir la raíz al Swagger UI
 app.get('/', (req, res) => {
   res.redirect('/api-docs');
 });
 
-
-
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 // Conectar a MongoDB
 MongoClient.connect(process.env.MONGODB_URI)

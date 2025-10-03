@@ -1,14 +1,27 @@
 const swaggerAutogen = require('swagger-autogen')();
 
-const outputFile = './src/swagger-output.json';
-const endpointsFiles = ['./src/routes/items.js'];
+const outputFile = './swagger-output.json';
+const endpointsFiles = ['./app.js'];
 
-swaggerAutogen(outputFile, endpointsFiles, {
+const doc = {
   info: {
     title: 'W03 CRUD API',
-    description: 'API for items CRUD operations'
+    description: 'API for items and orders CRUD operations',
+    version: '1.0.0'
   },
   host: `localhost:${process.env.PORT || 8080}`,
   schemes: ['http'],
-  basePath: '/api/items'   // <--- aquí está el cambio
-});
+  tags: [
+    {
+      name: 'Items',
+      description: 'Items CRUD operations'
+    },
+    {
+      name: 'Orders', 
+      description: 'Orders CRUD operations'
+    }
+  ]
+};
+
+// Esta es la forma correcta
+swaggerAutogen(outputFile, endpointsFiles, doc);

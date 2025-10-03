@@ -1,109 +1,115 @@
 const express = require('express');
 const router = express.Router();
-const itemsController = require('../controllers/itemsController');
+const ordersController = require('../controllers/ordersController');
 
 /**
  * @swagger
  * components:
  *   schemas:
- *     Item:
+ *     Order:
  *       type: object
  *       required:
- *         - name
- *         - category
+ *         - customerName
+ *         - product
+ *         - quantity
  *         - price
  *       properties:
  *         _id:
  *           type: string
- *           description: The auto-generated ID of the item
- *         name:
+ *           description: The auto-generated ID of the order
+ *         customerName:
  *           type: string
- *           description: The item name
- *         category:
+ *           description: The customer name
+ *         product:
  *           type: string
- *           description: The item category
+ *           description: The product name
+ *         quantity:
+ *           type: number
+ *           minimum: 1
+ *           description: The quantity ordered
  *         price:
  *           type: number
  *           minimum: 0
- *           description: The item price
+ *           description: The product price
  *       example:
- *         _id: 650a1b2c3d4e5f0012345678
- *         name: Laptop
- *         category: Electronics
+ *         _id: 650a1b2c3d4e5f0012345679
+ *         customerName: John Doe
+ *         product: Laptop
+ *         quantity: 1
  *         price: 999.99
  */
 
 /**
  * @swagger
  * tags:
- *   name: Items
- *   description: The items managing API
+ *   name: Orders
+ *   description: The orders managing API
  */
 
 /**
  * @swagger
- * /api/items:
+ * /api/orders:
  *   get:
- *     summary: Returns the list of all the items
- *     tags: [Items]
+ *     summary: Returns the list of all the orders
+ *     tags: [Orders]
  *     responses:
  *       200:
- *         description: The list of the items
+ *         description: The list of the orders
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Item'
+ *                 $ref: '#/components/schemas/Order'
  *       500:
  *         description: Internal server error
  */
-router.get('/', itemsController.getAllItems);
+router.get('/', ordersController.getAllOrders);
 
 /**
  * @swagger
- * /api/items/{id}:
+ * /api/orders/{id}:
  *   get:
- *     summary: Get the item by id
- *     tags: [Items]
+ *     summary: Get the order by id
+ *     tags: [Orders]
  *     parameters:
  *       - in: path
  *         name: id
  *         schema:
  *           type: string
  *         required: true
- *         description: The item id
+ *         description: The order id
  *     responses:
  *       200:
- *         description: The item description by id
+ *         description: The order description by id
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Item'
+ *               $ref: '#/components/schemas/Order'
  *       400:
  *         description: Invalid ID format
  *       404:
- *         description: The item was not found
+ *         description: The order was not found
  *       500:
  *         description: Internal server error
  */
-router.get('/:id', itemsController.getItemById);
+router.get('/:id', ordersController.getOrderById);
 
 /**
  * @swagger
- * /api/items:
+ * /api/orders:
  *   post:
- *     summary: Create a new item
- *     tags: [Items]
+ *     summary: Create a new order
+ *     tags: [Orders]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Item'
+ *             $ref: '#/components/schemas/Order'
  *     responses:
  *       201:
- *         description: The item was successfully created
+ *         description: The order was successfully created
  *         content:
  *           application/json:
  *             schema:
@@ -114,66 +120,66 @@ router.get('/:id', itemsController.getItemById);
  *                 id:
  *                   type: string
  *       400:
- *         description: Missing required fields or invalid price
+ *         description: Missing required fields or invalid data
  *       500:
  *         description: Internal server error
  */
-router.post('/', itemsController.createItem);
+router.post('/', ordersController.createOrder);
 
 /**
  * @swagger
- * /api/items/{id}:
+ * /api/orders/{id}:
  *   put:
- *     summary: Update the item by the id
- *     tags: [Items]
+ *     summary: Update the order by the id
+ *     tags: [Orders]
  *     parameters:
  *       - in: path
  *         name: id
  *         schema:
  *           type: string
  *         required: true
- *         description: The item id
+ *         description: The order id
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Item'
+ *             $ref: '#/components/schemas/Order'
  *     responses:
  *       200:
- *         description: The item was updated
+ *         description: The order was updated
  *       400:
  *         description: Invalid ID format or missing fields
  *       404:
- *         description: The item was not found
+ *         description: The order was not found
  *       500:
  *         description: Internal server error
  */
-router.put('/:id', itemsController.updateItem);
+router.put('/:id', ordersController.updateOrder);
 
 /**
  * @swagger
- * /api/items/{id}:
+ * /api/orders/{id}:
  *   delete:
- *     summary: Remove the item by id
- *     tags: [Items]
+ *     summary: Remove the order by id
+ *     tags: [Orders]
  *     parameters:
  *       - in: path
  *         name: id
  *         schema:
  *           type: string
  *         required: true
- *         description: The item id
+ *         description: The order id
  *     responses:
  *       200:
- *         description: The item was deleted
+ *         description: The order was deleted
  *       400:
  *         description: Invalid ID format
  *       404:
- *         description: The item was not found
+ *         description: The order was not found
  *       500:
  *         description: Internal server error
  */
-router.delete('/:id', itemsController.deleteItem);
+router.delete('/:id', ordersController.deleteOrder);
 
 module.exports = router;

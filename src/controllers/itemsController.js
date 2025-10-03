@@ -3,67 +3,114 @@ const { ObjectId } = require('mongodb');
 // GET all items
 const getAllItems = async (req, res) => {
   try {
-    const db = req.app.locals.db;
-    const items = await db.collection('items').find().toArray();
-    res.json(items);
+    const items = await req.app.locals.db.collection('items').find().toArray();
+    res.status(200).json(items);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to get items' });
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-// GET item by id
+// GET item by ID
 const getItemById = async (req, res) => {
   try {
-    const db = req.app.locals.db;
-    const item = await db.collection('items').findOne({ _id: new ObjectId(req.params.id) });
-    if (!item) return res.status(404).json({ error: 'Item not found' });
-    res.json(item);
+    const id = req.params.id;
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid ID format' });
+    }
+
+    const item = await req.app.locals.db.collection('items').findOne({ _id: new ObjectId(id) });
+    if (!item) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
+    res.status(200).json(item);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to get item' });
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-// POST create item
+// POST create new item
 const createItem = async (req, res) => {
   try {
-    const db = req.app.locals.db;
     const { name, category, price } = req.body;
-    if (!name || !category || !price) {
+
+    // Validación
+    if (!name || !category || price === undefined) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
-    const result = await db.collection('items').insertOne({ name, category, price });
-    res.status(201).json(result);
+    if (typeof price !== 'number' || price < 0) {
+      return res.status(400).json({ error: 'Price must be a positive number' });
+    }
+
+    const result = await req.app.locals.db.collection('items').insertOne({ name, category, price });
+    res.status(201).json({ message: 'Item created', id: result.insertedId });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create item' });
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-// PUT update item
+// PUT update item by ID
 const updateItem = async (req, res) => {
   try {
-    const db = req.app.locals.db;
+    const id = req.params.id;
     const { name, category, price } = req.body;
-    const result = await db.collection('items').updateOne(
-      { _id: new ObjectId(req.params.id) },
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid ID format' });
+    }
+
+    // Validación
+    if (!name || !category || price === undefined) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+    if (typeof price !== 'number' || price < 0) {
+      return res.status(400).json({ error: 'Price must be a positive number' });
+    }
+
+    const result = await req.app.locals.db.collection('items').updateOne(
+      { _id: new ObjectId(id) },
       { $set: { name, category, price } }
     );
-    if (result.matchedCount === 0) return res.status(404).json({ error: 'Item not found' });
-    res.json(result);
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
+    res.status(200).json({ message: 'Item updated' });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to update item' });
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-// DELETE item
+// DELETE item by ID
 const deleteItem = async (req, res) => {
   try {
-    const db = req.app.locals.db;
-    const result = await db.collection('items').deleteOne({ _id: new ObjectId(req.params.id) });
-    if (result.deletedCount === 0) return res.status(404).json({ error: 'Item not found' });
-    res.json(result);
+    const id = req.params.id;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid ID format' });
+    }
+
+    const result = await req.app.locals.db.collection('items').deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
+    res.status(200).json({ message: 'Item deleted' });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to delete item' });
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-module.exports = { getAllItems, getItemById, createItem, updateItem, deleteItem };
+module.exports = {
+  getAllItems,
+  getItemById,
+  createItem,
+  updateItem,
+  deleteItem
+};

@@ -9,5 +9,6 @@ swaggerAutogen(outputFile, endpointsFiles, {
     description: 'API for items CRUD operations'
   },
   host: `localhost:${process.env.PORT || 8080}`,
-  schemes: ['http']
+  schemes: ['http'],
+  basePath: '/api/items'   // <--- aquí está el cambio
 });

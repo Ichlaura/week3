@@ -13,6 +13,11 @@ dotenv.config();
 const app = express();
 app.use(bodyParser.json());
 
+// ✅ Health check route (AGREGA ESTO)
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date() });
+});
+
 // Rutas API
 app.use('/api/items', itemsRoutes);
 app.use('/api/orders', ordersRoutes);
@@ -32,6 +37,7 @@ MongoClient.connect(process.env.MONGODB_URI)
   .then(client => {
     const db = client.db();
     app.locals.db = db;
-    app.listen(port, () => console.log(`Server running on port ${port}`));
+    // ✅ Agrega '0.0.0.0' aquí (ESTO FALTA)
+    app.listen(port, '0.0.0.0', () => console.log(`Server running on port ${port}`));
   })
   .catch(err => console.error('Error connecting to MongoDB:', err));

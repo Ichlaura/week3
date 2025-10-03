@@ -3,9 +3,17 @@ const swaggerAutogen = require('swagger-autogen')();
 const outputFile = './swagger-output.json';
 const endpointsFiles = ['./app.js'];
 
-// Configuración dinámica para local y producción
-const isProduction = process.env.NODE_ENV === 'production';
-const renderUrl = process.env.RENDER_URL; // Agrega esta variable en Render
+// URL dinámica para producción
+const getHost = () => {
+  if (process.env.RENDER_EXTERNAL_URL) {
+    return process.env.RENDER_EXTERNAL_URL.replace('https://', '');
+  }
+  return `localhost:${process.env.PORT || 8080}`;
+};
+
+const getSchemes = () => {
+  return process.env.RENDER_EXTERNAL_URL ? ['https'] : ['http'];
+};
 
 const doc = {
   info: {
@@ -13,8 +21,9 @@ const doc = {
     description: 'API for items and orders CRUD operations',
     version: '1.0.0'
   },
-  host: isProduction ? renderUrl : `localhost:${process.env.PORT || 8080}`,
-  schemes: isProduction ? ['https'] : ['http']
+  host: getHost(),
+  schemes: getSchemes()
 };
 
+console.log('Generating Swagger for host:', getHost());
 swaggerAutogen(outputFile, endpointsFiles, doc);

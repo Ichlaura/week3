@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ordersController = require('../controllers/ordersController');
+const ensureAuth = require('../middleware/ensureAuth');
 
 /**
  * @swagger
@@ -124,7 +125,7 @@ router.get('/:id', ordersController.getOrderById);
  *       500:
  *         description: Internal server error
  */
-router.post('/', ordersController.createOrder);
+router.post('/', ensureAuth,ordersController.createOrder);
 
 /**
  * @swagger
@@ -155,7 +156,7 @@ router.post('/', ordersController.createOrder);
  *       500:
  *         description: Internal server error
  */
-router.put('/:id', ordersController.updateOrder);
+router.put('/:id', ensureAuth,ordersController.updateOrder);
 
 /**
  * @swagger
@@ -180,6 +181,6 @@ router.put('/:id', ordersController.updateOrder);
  *       500:
  *         description: Internal server error
  */
-router.delete('/:id', ordersController.deleteOrder);
+router.delete('/:id',ensureAuth, ordersController.deleteOrder);
 
 module.exports = router;

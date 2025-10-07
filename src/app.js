@@ -73,22 +73,22 @@ app.use('/api/orders', ensureAuth, ordersRoutes);
 app.get('/', (req, res) => res.redirect('/api-docs'));
 app.get('/api', (req, res) => res.redirect('/api-docs'));
 
-// --- Conexión a MongoDB y arranque del servidor ---
-const port = process.env.PORT || 8080;
-
+// --- Conexión a MongoDB (no bloquea el arranque del servidor) ---
 MongoClient.connect(process.env.MONGODB_URI)
   .then(client => {
     const db = client.db();
     app.locals.db = db;
-
-    app.listen(port, () => {
-      console.log(`✅ Servidor corriendo en ${isProd ? 'Render' : 'localhost'}:${port}`);
-      console.log(`📘 Documentación Swagger disponible en /api-docs`);
-    });
+    console.log('✅ Connected to MongoDB successfully.');
   })
   .catch(err => {
-    console.error('❌ Error conectando a MongoDB:', err);
-    process.exit(1);
+    console.error('❌ Error connecting to MongoDB:', err);
   });
+
+// --- Arranque del servidor ---
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log(`✅ Servidor corriendo en ${isProd ? 'Render' : 'localhost'}:${port}`);
+  console.log(`📘 Documentación Swagger disponible en /api-docs`);
+});
 
 module.exports = app;

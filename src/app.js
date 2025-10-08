@@ -85,7 +85,9 @@ MongoClient.connect(process.env.MONGODB_URI)
   });
 
 // --- Arranque del servidor ---
+// ⚠️ Render asigna un puerto automáticamente (process.env.PORT)
 const port = process.env.PORT || 8080;
+
 app.listen(port, () => {
   console.log(`✅ Servidor corriendo en ${isProd ? 'Render' : 'localhost'}:${port}`);
   console.log(`📘 Documentación Swagger disponible en /api-docs`);

@@ -5,10 +5,10 @@
     "description": "API for items and orders CRUD operations with authentication",
     "version": "1.0.0"
   },
-  "host": "localhost:8080",
+  "host": "week3-i0vy.onrender.com",
   "basePath": "/",
   "schemes": [
-    "http"
+    "https"
   ],
   "securityDefinitions": {
     "bearerAuth": {
